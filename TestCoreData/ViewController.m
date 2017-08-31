@@ -14,6 +14,10 @@
 
 @interface ViewController ()
 
+@property (nonatomic, strong) AppDelegate *appDelegate;
+
+@property (nonatomic, strong) NSManagedObjectContext *context;
+
 @end
 
 @implementation ViewController
@@ -21,16 +25,11 @@
 //查询
 - (void)query
 {
-    AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
-    
-    NSManagedObjectContext *context = app.persistentContainer.viewContext;
-    
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Student" inManagedObjectContext:context];
-    
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Student" inManagedObjectContext:_context];
     request.entity = entityDescription;
     
-    NSArray *fetchedObjects = [context executeFetchRequest:request error:nil];
+    NSArray *fetchedObjects = [_context executeFetchRequest:request error:nil];
     
     for (Student *s in fetchedObjects)
     {
@@ -42,6 +41,10 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
+    _appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    _context = _appDelegate.persistentContainer.viewContext;
+
+    
     //[self add];
     
     [self query];
@@ -51,15 +54,11 @@
 //添加数据
 - (void)add
 {
-    AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
-    
-    NSManagedObjectContext *context = app.persistentContainer.viewContext;
-    
-    Student *student = [NSEntityDescription insertNewObjectForEntityForName:@"Student" inManagedObjectContext:context];
+    Student *student = [NSEntityDescription insertNewObjectForEntityForName:@"Student" inManagedObjectContext:_context];
     [student setValue:@"小话" forKey:@"name"];
     [student setValue:@(20) forKey:@"age"];
     
-    [app saveContext];
+    [_appDelegate saveContext];
 }
 
 
